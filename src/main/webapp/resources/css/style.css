@@ -1,0 +1,535 @@
+@import url('//use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css'); @font-face {
+    font-family: 'FontAwesome';
+    src: url('//use.fontawesome.com/releases/v4.7.0/fonts/fontawesome-webfont.eot');
+    src: url('//use.fontawesome.com/releases/v4.7.0/fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('//use.fontawesome.com/releases/v4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), url('//use.fontawesome.com/releases/v4.7.0/fonts/fontawesome-webfont.woff') format('woff'), url('//use.fontawesome.com/releases/v4.7.0/fonts/fontawesome-webfont.ttf') format('truetype'), url('//use.fontawesome.com/releases/v4.7.0/fonts/fontawesome-webfont.svg#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    min-width: 1200px;
+}
+
+.project-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.project-table td {
+    padding: 5px;
+}
+
+.project-id {
+    width: 20px;
+}
+
+.project-client-id {
+    width: 40px;
+}
+
+.project-status {
+    width: 230px;
+}
+
+.project-payment {
+    width: 70px;
+}
+
+.project-client-last-name {
+    width: 100px;
+}
+
+.project-description {
+    width: 250px;
+}
+
+/* LOGIN PAGE */
+.login-page {
+    padding: 30px 0;
+}
+
+.login-info__block {
+    text-align: center;
+}
+
+.login-info {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 14px;
+    border-right: 1px solid;
+}
+
+.login-info:last-child {
+    border-right: 0;
+}
+
+.login-logo {
+    margin: 25px 0 0;
+    font-size: 36px;
+    text-align: center;
+}
+
+.login-block {
+    max-width: 300px;
+    margin: 30px auto 50px;
+}
+
+.login-form {
+    margin: 0 0 15px;
+}
+
+.login-form input {
+    margin: 0 0 7px;
+}
+
+.login-form button {
+    width: 100%;
+}
+
+.login-register {
+    display: block;
+    vertical-align: top;
+    margin: 6px 0 0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.login-register:hover {
+    text-decoration: none;
+}
+
+.login-register-text {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 25px 0 20px;
+    font-size: 17px;
+}
+
+.login-register-text:before, .login-register-text:after {
+    content: '';
+    display: block;
+    border-top: 1px solid #ccc;
+    flex-grow: 2;
+}
+
+.login-register-text:before {
+    margin-right: 3%;
+}
+
+.login-register-text:after {
+    margin-left: 3%;
+}
+
+.login-footer {
+    padding: 10px 5%;
+    font-size: 18px;
+}
+
+/* HEADER */
+.nav-block {
+    background: #5bc0de;
+}
+
+.navbar-brand {
+    color: #fff;
+}
+
+.navbar-brand:hover {
+    color: #fff;
+    background: hsla(194, 67%, 55%, 1);
+}
+
+.nav-block .btn {
+    padding-top: 0;
+    padding-bottom: 0;
+    border: 0;
+    border-radius: 0;
+    line-height: 50px;
+}
+.nav-block .btn:focus {
+    outline: none;
+}
+.nav-block .navbar-form {
+    margin: 0;
+}
+
+.jumbotron {
+    padding: 30px 0;
+}
+
+table.dataTable thead>tr>th[class*="sorting"] {
+    padding-right: 5px;
+}
+
+table.dataTable thead>tr>th[class*="sorting"]:after {
+    content: '';
+}
+
+.project-table>thead tr {
+    background: rgb(57, 140, 199);
+    color: #fff;
+}
+
+.project-table th {
+    padding: 10px 5px;
+    text-align: center;
+    font-weight: normal;
+}
+
+table.datatable {
+    border-collapse: collapse !important;
+}
+
+.project-table>thead th {
+    border: 1px solid rgb(27, 102, 156);
+    border-bottom: 0;
+}
+
+td.child-row {
+    padding: 0 0 50px;
+}
+
+.child-content {
+    padding: 15px;
+    position: relative;
+    z-index: 20;
+    box-shadow: 0px 4px 6px 2px rgba(0, 0, 0, 0.21);
+}
+
+.project-table .parent-row.odd, .project-table .parent-row.odd + .child-row .child-content {
+    background: rgb(200, 227, 235);
+}
+
+.project-table .parent-row.even, .project-table .parent-row.even + .child-row .child-content {
+    background: rgb(226, 232, 237);
+}
+
+.project-table .project-id {
+    width: 24px;
+    text-align: center;
+}
+
+.project-table .project-client-id {
+    width: 45px;
+    text-align: center;
+}
+
+.project-table .order-table-head .project-name {
+    width: 120px;
+}
+
+.project-table .order-table-head .project-description {
+    width: 280px;
+}
+
+.project-table .project-payment {
+    width: 60px;
+    text-align: center;
+}
+
+.project-table .project-client-last-name {
+    width: 97px;
+    text-align: center;
+}
+
+.project-table .project-status {
+    width: 100px;
+}
+.project-table .project-required-skills {
+    width: 200px;
+}
+.parent-row {
+    position: relative;
+    z-index: 10;
+    box-shadow: 0px 3px 6px 1px rgba(0, 0, 0, 0.34);
+}
+.comment-table {
+    table-layout: fixed;
+    width: 100%;
+    margin: 0 0 20px;
+}
+
+.comment-table
+th:first-child {
+    width: calc(100% - 60px);
+    font-weight: bold;
+}
+
+.comment-table
+th:nth-child(2), .comment-table
+th:nth-child(3), .comment-table
+th:nth-child(4) {
+    width: 30px;
+}
+
+.applied-freelancer-table td, .comment-table td {
+    padding: 8px 7px;
+    border-bottom: 1px solid #ccc;
+}
+
+.applied-freelancer-table tbody tr:hover, .comment-table tbody tr:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+.btn-project {
+    margin: 5px 0;
+    padding: 4px 4px;
+    font-size: 15px;
+}
+.project-table .parent-row td:nth-last-child(1),
+.project-table .parent-row td:nth-last-child(2),
+.project-table .parent-row td:nth-last-child(3) {
+    text-align: center;
+}
+
+.comment-table .btn {
+    font-size: 19px;
+}
+
+.btn-unblock-comment {
+    color: #13a713;
+}
+.btn-unblock-comment:hover {
+    color: #109b10;
+}
+.btn-block-comment {
+    color: #c60404;
+}
+.btn-block-comment:hover {
+    color: #aa0505;
+}
+.btn-delete-comment {
+    color: #c60404;
+}
+.btn-delete-comment:hover {
+    color: #aa0505;
+}
+.order-table-head th:nth-last-child(1), .order-table-head th:nth-last-child(2), .order-table-head th:nth-last-child(3) {
+    border-right: 0;
+    border-left: 0;
+}
+
+.applied-freelancer-table {
+    width: 100%;
+    margin: 10px 0 30px;
+}
+.applied-freelancer-table th {
+    font-weight: bold;
+}
+.profile-page {
+    max-width: 500px;
+    margin: 0 auto;
+}
+.profile-page h3 {
+    margin: 10px 0;
+    font-size: 30px;
+    line-height: 1;
+    text-align: center;
+}
+.profile-form label, .profile-form input {
+    display: inline-block;
+    vertical-align: top;
+}
+.profile-form label {
+    width: 30%;
+}
+.profile-form input {
+    width: 65%;
+    margin: 0 0 0 4%;
+}
+.profile-form .table-row {
+    margin: 10px 0 0;
+}
+.profile-submit {
+    float: right;
+    min-width: 200px;
+    width: 65%;
+    margin: 10px auto 0;
+    background: #25a1c5;
+    border: 0;
+    color: #fff;
+    font-size: 19px;
+    line-height: 43px;
+}
+.profile-form:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.profile-form {
+    position: relative;
+    left: -15%;
+}
+.profile-submit:hover {
+    background: #26add4;
+}
+.show-add-new-modal {
+    margin: 7px 0 16px;
+}
+.ui-widget-content {
+    z-index: 9999;
+}
+.flights .paginate_button {
+    display: none;
+}
+.flights .paginate_button.previous,
+.flights .paginate_button.active,
+.flights .paginate_button.next {
+    display: initial;
+}
+
+.input-filter {
+    width:150px;
+}
+
+.seat-picker__title {
+    margin: 0 0 10px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+}
+.seat-picker {
+    display: flex;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+    height: 130px;
+    width: 300px;
+    margin: 0 auto 21px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f0f0f0;
+}
+
+.seat {
+    width: 32px;
+    line-height: 25px;
+    margin: 4px;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    color: #fff;
+}
+
+.seat.disabled {
+    background: #ccc;
+    cursor: default;
+}
+
+.seat.enabled {
+    background: #2a86e4;
+    color: #fff;
+}
+
+.seat.enabled:hover {
+    background: #1a7de2;
+}
+.seat.enabled.active {
+    background: red;
+}
+.select-lang {
+    float: right;
+    margin: 0 1% 0 0;
+}
+.select-lang > a {
+    line-height: 50px;
+}
+
+#filter .input-filter {
+    width: 100%;
+}
+.header-login-form {
+    float: right;
+    line-height: 50px;
+}
+.nav-block .header-login-form .btn {
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.nav-block .header-login-form .btn .glyphicon {
+    top: 0;
+}
+#userDTO input,
+#tariffsDetails input{
+    padding: 0 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    line-height: 28px;
+}
+
+#userDTO label,
+#tariffsDetails label {
+    padding-top: 0;
+    line-height: 30px;
+}
+.tariffs-desc {
+    line-height: 1.6;
+}
+.modal-group {
+    padding: 0 35px;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+.modal-group > .col-md-6:first-child {
+    border-right: 1px solid #ddd;
+}
+.modal-subtitle {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 6px;
+}
+.control-label.control-label-no-padding {
+    padding-top: 0;
+}
+.tickets-btn {
+    margin: 20px 5px 10px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid #ddd;
+    font-size: 17px;
+}
+.tickets-btn:focus {
+    outline: none;
+}
+.tickets-btn.active {
+    border-bottom-color: #5bc0de;
+}
+.error-text {
+    display: inline-block;
+}
+.error input {
+    outline: rgba(255, 0, 0, 0.64) auto 5px;
+}
+#detailsForm input {
+    max-width: 220px;
+}
+.popup {
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 60%;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 1px 0 15px 0 rgba(0,0,0,.3);
+    font-size: 17px;
+    text-align: center;
+}
+.timer .mins,
+.timer .secs {
+    display: inline-block;
+    vertical-align: top;
+}
+.table-tickets {
+    table-layout: fixed;
+    font-size: 14px;
+}
+.table-tickets thead {
+    font-size: 13px;
+}
