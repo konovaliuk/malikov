@@ -5,6 +5,7 @@
     <jmxConfigurator/>
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <!--todo not writing in file now-->
         <file>${LOWCOST_ROOT}/log/lowcost.log</file>
         <encoder>
             <charset>UTF-8</charset>
@@ -15,7 +16,7 @@
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%-5level %logger{0} [%file:%line] %msg%n</pattern>
+            <pattern>%-5level %logger{0} %M [%file:%line] %msg%n</pattern>
         </encoder>
     </appender>
 
