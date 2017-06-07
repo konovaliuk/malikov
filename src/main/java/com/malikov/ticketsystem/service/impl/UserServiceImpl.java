@@ -6,7 +6,7 @@ import com.malikov.ticketsystem.model.User;
 import com.malikov.ticketsystem.repository.IRoleRepository;
 import com.malikov.ticketsystem.repository.IUserRepository;
 import com.malikov.ticketsystem.service.IUserService;
-import com.malikov.ticketsystem.util.UserUtil;
+import com.malikov.ticketsystem.util.dtoconverter.UserDTOConverter;
 import com.malikov.ticketsystem.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,9 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 
-import static com.malikov.ticketsystem.util.UserUtil.prepareToSave;
-import static com.malikov.ticketsystem.util.UserUtil.updateFromTo;
-import static com.malikov.ticketsystem.util.ValidationUtil.checkNotFoundWithId;
+import static com.malikov.ticketsystem.util.dtoconverter.UserDTOConverter.prepareToSave;
+import static com.malikov.ticketsystem.util.dtoconverter.UserDTOConverter.updateFromTo;
+import static com.malikov.ticketsystem.util.ValidationUtil.checkNotFoundById;
+import static com.malikov.ticketsystem.util.ValidationUtil.checkSuccess;
 
 /**
  * @author Yurii Malikov
@@ -36,13 +37,13 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Override
     public User get(long userId) {
-        return checkNotFoundWithId(userRepository.get(userId), userId);
+        return checkNotFoundById(userRepository.get(userId), userId);
     }
 
     @Override
     public User create(UserDTO userDTO) {
         ValidationUtil.checkNew(userDTO);
-        User user = UserUtil.createNewFromDTO(userDTO);
+        User user = UserDTOConverter.createNewFromDTO(userDTO);
         user.setRoles(Collections.singleton(roleRepository.getByName("ROLE_USER")));
         return userRepository.save(prepareToSave(user));
     }
@@ -61,12 +62,12 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Override
     public void delete(long userId) {
-        ValidationUtil.checkSuccess(userRepository.delete(userId), "not found user with id" + userId);
+        checkNotFoundById(userRepository.delete(userId), userId);
     }
 
     @Override
     public User getByEmail(String email) {
-        return ValidationUtil.checkSuccess(userRepository.getByEmail(email), "email=" + email);
+        return checkSuccess(userRepository.getByEmail(email), "not found by email=" + email);
     }
 
     @Override

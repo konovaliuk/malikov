@@ -11,7 +11,7 @@ import com.malikov.ticketsystem.repository.IFlightRepository;
 import com.malikov.ticketsystem.repository.ITicketRepository;
 import com.malikov.ticketsystem.repository.IUserRepository;
 import com.malikov.ticketsystem.service.ITicketService;
-import com.malikov.ticketsystem.util.TicketUtil;
+import com.malikov.ticketsystem.util.dtoconverter.TicketDTOConverter;
 import com.malikov.ticketsystem.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.malikov.ticketsystem.util.DateTimeUtil.BOOKING_DURATION_MILLIS;
+import static com.malikov.ticketsystem.util.ValidationUtil.checkNotFoundById;
+import static com.malikov.ticketsystem.util.ValidationUtil.checkSuccess;
 
 /**
  * @author Yurii Malikov
@@ -65,7 +67,7 @@ public class TicketServiceImpl implements ITicketService {
                 .stream()
                 .map(ticket -> {
                     ScheduledFuture ticketRemovalTask = ticketIdRemovalTaskMap.get(ticket.getId());
-                    return TicketUtil.getTicketWithRemaimingDelayDTO(ticket,
+                    return TicketDTOConverter.getTicketWithRemaimingDelayDTO(ticket,
                             ticketRemovalTask != null
                                     ? ticketRemovalTask.getDelay(TimeUnit.MILLISECONDS)
                                     : null);
@@ -77,7 +79,7 @@ public class TicketServiceImpl implements ITicketService {
     public List<TicketDTO> getArchivedTickets(Long userId, Integer start, Integer limit) {
         return ticketRepository.getArchivedByUserId(userId, start, limit)
                 .stream()
-                .map(TicketUtil::asDTO)
+                .map(TicketDTOConverter::asDTO)
                 .collect(Collectors.toList());
     }
 
@@ -85,9 +87,7 @@ public class TicketServiceImpl implements ITicketService {
     @Transactional
     public void cancelBooking(Long ticketId) {
         Ticket ticket = ticketRepository.get(ticketId);
-        ValidationUtil.checkSuccess(ticket, "not found ticket with id=" + ticketId);
-
-        ValidationUtil.checkSuccess(ticket != null
+        checkSuccess(ticket != null
                         && ticket.getStatus().equals(TicketStatus.BOOKED)
                         && ticket.getUser().getId() == AuthorizedUser.id(),
                 "not found booked ticket with id=" + ticketId + "for authorized user.");
@@ -98,8 +98,7 @@ public class TicketServiceImpl implements ITicketService {
     // TODO: 6/1/2017 It should be transactional
     @Transactional
     public void processPaymentByUser(Long ticketId, OffsetDateTime purchaseOffsetDateTime) {
-        Ticket ticket = ticketRepository.get(ticketId);
-        ValidationUtil.checkSuccess(ticket, "Requested booked ticket has not been found.");
+        Ticket ticket = checkNotFoundById(ticketRepository.get(ticketId), ticketId);
 
         if (!ticket.getUser().getId().equals(AuthorizedUser.id())) {
             throw new AccessDeniedException("Access denied to ticket with id=" + ticketId);
@@ -109,8 +108,7 @@ public class TicketServiceImpl implements ITicketService {
             throw new IllegalArgumentException("Only ticket booked ticket can by processed.");
         }
 
-        ValidationUtil.checkSuccess(getWithdrawalStatus(AuthorizedUser.id(), ticket.getPrice()),
-                "Bank rejected purchase operation.");
+        checkSuccess(getWithdrawalStatus(AuthorizedUser.id(), ticket.getPrice()),"Rejected by bank.");
 
         ticket.setStatus(TicketStatus.PAID);
         ticket.setPurchaseOffsetDateTime(purchaseOffsetDateTime);
@@ -134,8 +132,7 @@ public class TicketServiceImpl implements ITicketService {
         scheduler = new ConcurrentTaskScheduler(localExecutor);
 
         return scheduler.schedule(() -> {
-                    ValidationUtil.checkSuccess(ticketRepository.deleteIfNotPaid(ticketId),
-                            "removal of booked ticket failed");
+                    checkNotFoundById(ticketRepository.deleteIfNotPaid(ticketId), ticketId);
                     ticketIdRemovalTaskMap.remove(ticketId);
                 },
                 new Date(System.currentTimeMillis() + BOOKING_DURATION_MILLIS));
@@ -149,8 +146,7 @@ public class TicketServiceImpl implements ITicketService {
                                                         TicketPriceDetailsDTO ticketPriceDetailsDTO) {
         Ticket newTicket = new Ticket();
         BigDecimal ticketPrice;
-        Flight flight = flightRepository.get(flightId);
-        ValidationUtil.checkSuccess(flight, "not found flight by id=" + flightId);
+        Flight flight = checkNotFoundById(flightRepository.get(flightId), flightId);
 
         ticketPrice = ticketPriceDetailsDTO.getBaseTicketPrice();
 
@@ -169,7 +165,7 @@ public class TicketServiceImpl implements ITicketService {
         }
 
         newTicket.setFlight(flight);
-        newTicket = TicketUtil.updateFromDTO(newTicket, ticketDTO);
+        newTicket = TicketDTOConverter.updateFromDTO(newTicket, ticketDTO);
         newTicket.setUser(userRepository.get(AuthorizedUser.id()));
         newTicket.setDepartureZoneId(flight.getDepartureAirport().getCity().getZoneId());
         newTicket.setStatus(TicketStatus.BOOKED);
@@ -185,14 +181,13 @@ public class TicketServiceImpl implements ITicketService {
         // TODO: 5/5/2017 get rid of message  duplicating ??? how??
         Assert.notNull(ticketDTO, "ticket should not be null");
         Ticket ticket = ticketRepository.get(ticketDTO.getId());
-        ValidationUtil.checkSuccess(ticketRepository.save(TicketUtil.updateFromDTO(ticket, ticketDTO)),
-                                "ticket update failed");
+        ValidationUtil.checkNotFoundById(ticketRepository.save(TicketDTOConverter.updateFromDTO(ticket, ticketDTO)),
+                                         ticketDTO.getId());
     }
 
     @Override
     public void delete(long ticketId) {
-        ValidationUtil.checkSuccess(ticketRepository.delete(ticketId),
-                "not found ticket with id=" + ticketId);
+        checkNotFoundById(ticketRepository.delete(ticketId), ticketId);
         terminateAutomaticalRemovalTask(ticketId);
     }
 
