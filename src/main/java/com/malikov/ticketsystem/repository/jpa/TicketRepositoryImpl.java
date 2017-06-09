@@ -4,6 +4,8 @@ import com.malikov.ticketsystem.model.Ticket;
 import com.malikov.ticketsystem.model.TicketStatus;
 import com.malikov.ticketsystem.model.User;
 import com.malikov.ticketsystem.repository.ITicketRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -21,8 +24,35 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TicketRepositoryImpl implements ITicketRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TicketRepositoryImpl.class);
+
     @PersistenceContext
     protected EntityManager em;
+
+    @Override
+    public Ticket get(long id) {
+        return em.find(Ticket.class, id);
+    }
+
+    @Override
+    @Transactional
+    public Ticket save(Ticket ticket) {
+        ticket.setUser(em.getReference(User.class, ticket.getUser().getId()));
+        if (ticket.isNew()){
+            em.persist(ticket);
+            LOG.info("New {} created.", ticket);
+            return ticket;
+        }
+        return get(ticket.getId()) != null ? em.merge(ticket) : null;
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(long id) {
+        return em.createQuery("DELETE FROM Ticket t WHERE t.id=:id")
+                .setParameter("id", id)
+                .executeUpdate() != 0;
+    }
 
     @Override
     public List<Ticket> getActiveByUserId(long userId, Integer start, Integer limit) {
@@ -31,7 +61,7 @@ public class TicketRepositoryImpl implements ITicketRepository {
                                         "ORDER BY t.departureUtcDateTime " +
                                         "DESC", Ticket.class)
                 .setParameter("userId", userId)
-                .setParameter("now", LocalDateTime.now())
+                .setParameter("now", LocalDateTime.now(ZoneId.of("UTC")))
                 .setFirstResult(start)
                 .setMaxResults(limit)
                 .getResultList();
@@ -44,14 +74,14 @@ public class TicketRepositoryImpl implements ITicketRepository {
                                         "WHERE u.id=:userId AND t.departureUtcDateTime<:now " +
                                         "ORDER BY t.departureUtcDateTime DESC", Ticket.class)
                 .setParameter("userId", userId)
-                .setParameter("now", LocalDateTime.now())
+                .setParameter("now", LocalDateTime.now(ZoneId.of("UTC")))
                 .setFirstResult(start)
                 .setMaxResults(limit)
                 .getResultList();
     }
 
     @Override
-    public List<Integer> getOccupiedSeatsNumbers(Long flightId) {
+    public List<Integer> getOccupiedSeatNumbers(Long flightId) {
         return em.createQuery("SELECT t.seatNumber FROM Ticket t " +
                                         "WHERE t.flight.id=:flightId", Integer.class)
                 .setParameter("flightId", flightId)
@@ -73,29 +103,6 @@ public class TicketRepositoryImpl implements ITicketRepository {
         query.setParameter("ticketId", ticketId);
         query.setParameter("status", TicketStatus.BOOKED);
         return query.executeUpdate() != 0;
-    }
-
-    @Override
-    @Transactional
-    public Ticket save(Ticket ticket) {
-        ticket.setUser(em.getReference(User.class, ticket.getUser().getId()));
-        if (ticket.isNew()){
-            em.persist(ticket);
-            return ticket;
-        }
-        return get(ticket.getId()) != null ? em.merge(ticket) : null;
-    }
-
-    @Override
-    public boolean delete(long id) {
-        return em.createQuery("DELETE FROM Ticket t WHERE t.id=:id")
-                .setParameter("id", id)
-                .executeUpdate() != 0;
-    }
-
-    @Override
-    public Ticket get(long id) {
-        return em.find(Ticket.class, id);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.malikov.ticketsystem.repository.jpa;
 import com.malikov.ticketsystem.model.Airport;
 import com.malikov.ticketsystem.model.City;
 import com.malikov.ticketsystem.repository.IAirportRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +21,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AirportRepositoryImpl implements IAirportRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AirportRepositoryImpl.class);
+
     @PersistenceContext
     protected EntityManager em;
-    
+
     @Override
     @Transactional
     public Airport save(Airport airport) {
         airport.setCity(em.getReference(City.class, airport.getCity().getId()));
-        if (airport.isNew()){
+        if (airport.isNew()) {
             em.persist(airport);
+            LOG.info("New {} created.", airport);
             return airport;
         }
         return get(airport.getId()) != null ? em.merge(airport) : null;
@@ -54,8 +59,8 @@ public class AirportRepositoryImpl implements IAirportRepository {
 
     @Override
     public Airport getByName(String name) {
-        List<Airport> airports =  em.createQuery("SELECT a FROM Airport a " +
-                        "WHERE lower(a.name) = lower(:name) ORDER BY a.id ASC", Airport.class)
+        List<Airport> airports = em.createQuery("SELECT a FROM Airport a " +
+                "WHERE lower(a.name) = lower(:name) ORDER BY a.id ASC", Airport.class)
                 .setParameter("name", name).getResultList();
         return DataAccessUtils.singleResult(airports);
     }

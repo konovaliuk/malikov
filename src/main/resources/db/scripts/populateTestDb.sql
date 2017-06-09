@@ -11,22 +11,14 @@ TRUNCATE TABLE tariffs_details;
 TRUNCATE TABLE tickets;
 SET FOREIGN_KEY_CHECKS = 1;
 
-ALTER TABLE users
-  AUTO_INCREMENT 1;
-ALTER TABLE roles
-  AUTO_INCREMENT 1;
-ALTER TABLE cities
-  AUTO_INCREMENT 1;
-ALTER TABLE airports
-  AUTO_INCREMENT 1;
-ALTER TABLE aircraft_models
-  AUTO_INCREMENT 1;
-ALTER TABLE aircraft
-  AUTO_INCREMENT 1;
-ALTER TABLE flights
-  AUTO_INCREMENT 1;
-ALTER TABLE tickets
-  AUTO_INCREMENT 1;
+ALTER TABLE users AUTO_INCREMENT 1;
+ALTER TABLE roles AUTO_INCREMENT 1;
+ALTER TABLE cities AUTO_INCREMENT 1;
+ALTER TABLE airports AUTO_INCREMENT 1;
+ALTER TABLE aircraft_models AUTO_INCREMENT 1;
+ALTER TABLE aircraft AUTO_INCREMENT 1;
+ALTER TABLE flights AUTO_INCREMENT 1;
+ALTER TABLE tickets AUTO_INCREMENT 1;
 
 INSERT INTO users (name, last_name, email, password, phone_number) VALUES
   ('Eduard', 'Eduardov', 'user@gmail.com', '$2a$11$bRQR2FxnBrKnr/PS0eaDUeEQzO2ZtYJllGPIkdekZ0q6rJVJrCmXm',
@@ -99,7 +91,7 @@ VALUES
   (10, 0.5, 2, 7, TRUE),
   (30, 0.5, 1.11, 5.11, FALSE);
 
-INSERT INTO tickets (flight_id, user_id, price, purchase_offsetdatetime, with_baggage, with_priority_registration,
+INSERT INTO tickets (flight_id, user_id, price, purchase_offsetdatetime, has_baggage, has_priority_registration,
                      passenger_name, passenger_last_name,
                      departure_airport_name, departure_city_name,
                      arrival_airport_name, arrival_city_name,

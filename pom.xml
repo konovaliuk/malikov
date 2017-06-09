@@ -31,47 +31,6 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
-<!--
-            &lt;!&ndash; todo what's that???  http://stackoverflow.com/questions/4305935/is-it-possible-to-supply-tomcat6s-context-xml-file-via-the-maven-cargo-plugin#4417945 &ndash;&gt;
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.5.0</version>
-                <configuration>
-                    <container>
-                        <containerId>tomcat8x</containerId>
-                        <systemProperties>
-                            <file.encoding>UTF-8</file.encoding>
-                            <spring.profiles.active>mySql</spring.profiles.active>
-                        </systemProperties>
-                        <dependencies>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                            </dependency>
-                        </dependencies>
-                    </container>
-                    <configuration>
-                        <configfiles>
-                            <configfile>
-                                <file>src/main/resources/tomcat/context.xml</file>
-                                <todir>conf/Catalina/localhost/</todir>
-                                <tofile>context.xml.default</tofile>
-                            </configfile>
-                        </configfiles>
-                    </configuration>
-                    <deployables>
-                        <deployable>
-                            <groupId>com.malikov</groupId>
-                            <artifactId>ticket-system</artifactId>
-                            <type>war</type>
-                            <properties>
-                                <context>${project.build.finalName}</context>
-                            </properties>
-                        </deployable>
-                    </deployables>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 
@@ -217,7 +176,6 @@
             <version>${hibernate-validator.version}</version>
         </dependency>
 
-        <!-- todo for hibernate validator or just html validation?????????? -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -352,5 +310,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>

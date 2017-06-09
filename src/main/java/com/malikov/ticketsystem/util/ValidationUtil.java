@@ -3,6 +3,7 @@ package com.malikov.ticketsystem.util;
 import com.malikov.ticketsystem.IHasId;
 import com.malikov.ticketsystem.util.exception.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,47 +14,59 @@ public class ValidationUtil {
 
     public static Map<String, String> constraintCodeMap = new HashMap<String, String>() {
         {
-            // TODO: 6/5/2017 i should use resource bundle instead!!
-            put("email", "Sorry, inputted email is not free. Choose another.");
-            put("seat", "Sorry, picked seat just has been booked by another user.");
+            put("email", "exception.sorryEmailIsNotFree");
+            put("seat", "exception.sorrySeatIsNotFreeAlready");
+            put("null", "exception.notFound");
         }
     };
 
     private ValidationUtil() {
     }
 
-    public static void checkNotFoundById(boolean found, long id) {
-        checkSuccess(found, "not found with id=" + id);
-    }
-
-    public static <T> T checkNotFoundById(T object, long id) {
-        return checkSuccess(object, "not found with id=" + id);
-    }
-
-    public static <T> T checkNotFoundByName(T object, String criteria) {
-        return checkSuccess(object, "not found by name=" + criteria);
-    }
-
-    public static <T> T checkSuccess(T object, String msg) {
-        checkSuccess(object != null, msg);
+    public static <T> T checkNotFound(T object, String message) {
+        checkNotFound(object != null, message);
         return object;
     }
 
-    public static void checkSuccess(boolean found, String message) {
+    public static void checkNotFound(boolean found, String message) {
         if (!found) {
             throw new NotFoundException(message);
         }
     }
 
-    public static void checkNotNew(IHasId bean) {
-        if (bean.isNew()) {
-            throw new IllegalArgumentException(bean + " should be not new (id!=null && id!=0)");
+    public static void validate(boolean valid, String message) {
+        if (!valid) {
+            throw new IllegalArgumentException(message);
         }
     }
 
-    public static void checkNew(IHasId bean) {
+    public static void checkNotNew(IHasId bean, String message) {
+        if (bean.isNew()) {
+            throw new IllegalArgumentException(bean.toString() + message);
+        }
+    }
+
+    public static void checkNew(IHasId bean, String message) {
         if (!bean.isNew()) {
-            throw new IllegalArgumentException(bean + " should be new (id==null or id=0)");
+            throw new IllegalArgumentException(bean.toString() + message);
+        }
+    }
+
+    public static <T> void checkNotEqual(T firstObject, T secondObject, String message) {
+        if (firstObject != null && secondObject != null) {
+            validate(!firstObject.equals(secondObject), message);
+        }
+    }
+
+    public static <T> void checkEqual(T firstObject, T secondObject, String message) {
+        if (firstObject != null && secondObject != null) {
+            validate(firstObject.equals(secondObject), message);
+        }
+    }
+
+    public static void validateFromToDates(LocalDateTime fromDateTime, LocalDateTime toDateTime, String message) {
+        if (fromDateTime != null && toDateTime != null) {
+            validate(fromDateTime.compareTo(toDateTime) < 0, message);
         }
     }
 

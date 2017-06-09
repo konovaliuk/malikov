@@ -3,6 +3,8 @@ package com.malikov.ticketsystem.repository.jpa;
 import com.malikov.ticketsystem.model.Aircraft;
 import com.malikov.ticketsystem.model.AircraftModel;
 import com.malikov.ticketsystem.repository.IAircraftRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +21,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AircraftRepositoryImpl implements IAircraftRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AircraftRepositoryImpl.class);
+
     @PersistenceContext
     protected EntityManager em;
-    
+
     @Override
     @Transactional
     public Aircraft save(Aircraft aircraft) {
         aircraft.setModel(em.getReference(AircraftModel.class, aircraft.getModel().getId()));
-        if (aircraft.isNew()){
+        if (aircraft.isNew()) {
             em.persist(aircraft);
+            LOG.info("New {} created.", aircraft);
             return aircraft;
         }
         return get(aircraft.getId()) != null ? em.merge(aircraft) : null;
@@ -54,8 +59,8 @@ public class AircraftRepositoryImpl implements IAircraftRepository {
 
     @Override
     public Aircraft getByName(String name) {
-        List<Aircraft> airports =  em.createQuery("SELECT a FROM Aircraft a " +
-                        "WHERE lower(a.name) = lower(:name) ORDER BY a.id ASC", Aircraft.class)
+        List<Aircraft> airports = em.createQuery("SELECT a FROM Aircraft a " +
+                "WHERE lower(a.name) = lower(:name) ORDER BY a.id ASC", Aircraft.class)
                 .setParameter("name", name).getResultList();
         return DataAccessUtils.singleResult(airports);
     }
@@ -63,7 +68,7 @@ public class AircraftRepositoryImpl implements IAircraftRepository {
     @Override
     public List<Aircraft> getByNameMask(String nameMask) {
         return em.createQuery("SELECT a FROM Aircraft a " +
-                        "WHERE lower(a.name) LIKE lower(:nameMask) ORDER BY a.id ASC", Aircraft.class)
+                "WHERE lower(a.name) LIKE lower(:nameMask) ORDER BY a.id ASC", Aircraft.class)
                 .setParameter("nameMask", '%' + nameMask + '%')
                 .getResultList();
     }

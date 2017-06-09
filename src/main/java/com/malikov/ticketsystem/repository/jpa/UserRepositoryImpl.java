@@ -3,6 +3,8 @@ package com.malikov.ticketsystem.repository.jpa;
 import com.malikov.ticketsystem.model.Role;
 import com.malikov.ticketsystem.model.User;
 import com.malikov.ticketsystem.repository.IUserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +24,14 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class UserRepositoryImpl implements IUserRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserRepositoryImpl.class);
+
     @PersistenceContext
     protected EntityManager em;
 
     @Override
     @Transactional
     public User save(User user) {
-        // TODO: 6/6/2017 Is it ok?
         Set<Role> roleReferences = new HashSet();
         for (Role role : user.getRoles()) {
             roleReferences.add(em.getReference(Role.class, role.getId()));
@@ -36,6 +39,7 @@ public class UserRepositoryImpl implements IUserRepository {
         user.setRoles(roleReferences);
         if (user.isNew()){
             em.persist((user));
+            LOG.info("New {} created.", user);
             return user;
         } else {
             return em.merge(user);
@@ -78,14 +82,19 @@ public class UserRepositoryImpl implements IUserRepository {
 
     @Override
     public List<String> getByEmailMask(String emailMask) {
-        return em.createQuery("SELECT u.email FROM User u WHERE lower(u.email) LIKE lower(:emailMask) ORDER BY u.email ASC", String.class)
+        return em.createQuery("SELECT u.email FROM User u " +
+                                        "WHERE lower(u.email) " +
+                                        "LIKE lower(:emailMask) " +
+                                        "ORDER BY u.email ASC", String.class)
                 .setParameter("emailMask", '%' + emailMask + '%')
                 .getResultList();
     }
 
     @Override
     public List<String> getLastNamesBy(String lastNameMask) {
-        return em.createQuery("SELECT u.lastName FROM User u WHERE lower(u.lastName) LIKE lower(:lastNameMask) ORDER BY u.lastName ASC", String.class)
+        return em.createQuery("SELECT u.lastName FROM User u " +
+                                "WHERE lower(u.lastName) LIKE lower(:lastNameMask) " +
+                                "ORDER BY u.lastName ASC", String.class)
                 .setParameter("lastNameMask", '%' + lastNameMask + '%')
                 .getResultList();
     }

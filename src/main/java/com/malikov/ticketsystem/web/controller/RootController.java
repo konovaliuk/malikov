@@ -10,11 +10,13 @@ import com.malikov.ticketsystem.util.dtoconverter.UserDTOConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.validation.Valid;
@@ -23,6 +25,9 @@ import javax.validation.Valid;
 public class RootController {
 
     private static final Logger LOG = LoggerFactory.getLogger(RootController.class);
+
+    @Autowired
+    MessageSource messageSource;
 
     @Autowired
     private IUserService userService;
@@ -63,7 +68,7 @@ public class RootController {
 
                 return "redirect:login?message=app.registered&username=" + userDTO.getEmail();
             } catch (DataIntegrityViolationException ex) {
-                result.rejectValue("email", "exception.users.duplicate_email");
+                result.rejectValue("email", "exception.sorryEmailIsNotFree");
             }
         }
         model.addAttribute("register", true);
@@ -81,9 +86,10 @@ public class RootController {
         if (!result.hasErrors()) {
             try {
                 LOG.info("update " + userDTO);
+                userDTO.setId(AuthorizedUser.id());
                 userService.update(userDTO);
                 status.setComplete();
-                return "redirect:meals";
+                return "redirect:profile";
             } catch (DataIntegrityViolationException ex) {
                 result.rejectValue("email", "exception.users.duplicate_email");
             }
@@ -98,7 +104,7 @@ public class RootController {
     }
 
     @PostMapping("/tariffs")
-    public void saveTariffs(@Valid TariffsDetails tariffsDetails, ModelMap model) {
+    public void saveTariffs(@Valid TariffsDetails tariffsDetails) {
         tariffsDetailsService.update(tariffsDetails);
     }
 }

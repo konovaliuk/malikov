@@ -29,8 +29,7 @@ public interface ITicketService {
     /**
      * @return persisted ticket or null if seat is now free already
      */
-    Ticket createNewBookedTicketAndScheduledTask(TicketDTO ticketDTO, long flightId,
-                                                 TicketPriceDetailsDTO ticketPriceDetailsDTO);
+    Ticket createNewBookedTicketAndScheduledTask(TicketDTO ticketDTO, long flightId, TicketPriceDetailsDTO ticketPriceDetails);
 
     /**
      * @param purchaseOffsetDateTime has information about local datetime and offset from place
@@ -65,7 +64,7 @@ public interface ITicketService {
      *          with remaining delays in millis before tickets will be automatically removed
      *          if ticket has status BOOKED (or null if ticket status is not BOOKED)
      */
-    List<TicketWithRemainingDelayDTO> getActiveTicketsDelays(long userId, Integer start, Integer limit);
+    List<TicketWithRemainingDelayDTO> getActiveTicketsWithDelays(long userId, Integer start, Integer limit);
 
     /**
      * @param userId method searches for ticket of User with userId

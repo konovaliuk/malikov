@@ -2,57 +2,78 @@ package com.malikov.ticketsystem.dto;
 
 import com.malikov.ticketsystem.model.TicketStatus;
 import com.malikov.ticketsystem.util.DateTimeUtil;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 /**
  * @author Yurii Malikov
  */
 
-// TODO: 5/31/2017 I can change it for tickets table
 public class TicketDTO extends BaseDTO {
 
+    @NotNull
+    @SafeHtml
+    @Size(min = 2, max = 50)
     private String passengerFirstName;
 
+    @NotNull
+    @SafeHtml
+    @Size(min = 2, max = 50)
     private String passengerLastName;
 
+    @NotNull
+    @SafeHtml
+    @Size(min = 2, max = 255)
     private String departureAirport;
 
+    @NotNull
+    @SafeHtml
+    @Size(min = 2, max = 255)
     private String arrivalAirport;
 
+    @NotNull
+    @SafeHtml
+    @Size(min = 2, max = 70)
     private String departureCity;
 
+    @NotNull
+    @SafeHtml
+    @Size(min = 2, max = 70)
     private String arrivalCity;
 
+    @NotNull
     @DateTimeFormat(pattern = DateTimeUtil.DATE_TIME_PATTERN)
     private LocalDateTime departureLocalDateTime;
 
+    @NotNull
     @DateTimeFormat(pattern = DateTimeUtil.DATE_TIME_PATTERN)
     private LocalDateTime arrivalLocalDateTime;
 
+    @NotNull
     private BigDecimal price;
 
-    private Boolean withBaggage;
+    private Boolean hasBaggage;
 
-    private Boolean withPriorityRegistrationAndBoarding;
+    private Boolean hasPriorityRegistrationAndBoarding;
 
     private Integer seatNumber;
 
     private TicketStatus status;
 
-    public TicketDTO(){}
+    public TicketDTO() {}
 
-    public TicketDTO(Long id, String passengerFirstName, String passengerLastName,
-                     String departureAirportName, String arrivalAirportName,
-                     String departureCityName, String arrivalCityName,
-                     LocalDateTime departureLocalDateTime, LocalDateTime arrivalLocalDateTime,
-                     BigDecimal price, Boolean withBaggage, Boolean withPriorityRegistrationAndBoarding,
-                     Integer seatNumber,
+    public TicketDTO(Long id, String passengerFirstName, String passengerLastName, String departureAirportName,
+                     String arrivalAirportName, String departureCityName, String arrivalCityName,
+                     LocalDateTime departureLocalDateTime, LocalDateTime arrivalLocalDateTime, BigDecimal price,
+                     Boolean hasBaggage, Boolean hasPriorityRegistrationAndBoarding, Integer seatNumber,
                      TicketStatus status) {
         super(id);
-        // TODO: 5/30/2017 Should i remove unnecessary this.
         this.passengerFirstName = passengerFirstName;
         this.passengerLastName = passengerLastName;
         this.departureAirport = departureAirportName;
@@ -62,10 +83,10 @@ public class TicketDTO extends BaseDTO {
         this.departureLocalDateTime = departureLocalDateTime;
         this.arrivalLocalDateTime = arrivalLocalDateTime;
         this.price = price;
-        this.withBaggage = withBaggage == null ? false : withBaggage;
-        this.withPriorityRegistrationAndBoarding = withPriorityRegistrationAndBoarding == null
+        this.hasBaggage = hasBaggage == null ? false : hasBaggage;
+        this.hasPriorityRegistrationAndBoarding = hasPriorityRegistrationAndBoarding == null
                 ? false
-                : withPriorityRegistrationAndBoarding;
+                : hasPriorityRegistrationAndBoarding;
         this.seatNumber = seatNumber;
         this.status = status;
     }
@@ -136,27 +157,27 @@ public class TicketDTO extends BaseDTO {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.setScale(6, RoundingMode.HALF_UP);
     }
 
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public Boolean getWithBaggage() {
-        return withBaggage;
+    public Boolean isHasBaggage() {
+        return hasBaggage;
     }
 
-    public void setWithBaggage(Boolean withBaggage) {
-        this.withBaggage = withBaggage;
+    public void setHasBaggage(Boolean hasBaggage) {
+        this.hasBaggage = hasBaggage;
     }
 
-    public Boolean getWithPriorityRegistrationAndBoarding() {
-        return withPriorityRegistrationAndBoarding;
+    public Boolean isHasPriorityRegistrationAndBoarding() {
+        return hasPriorityRegistrationAndBoarding;
     }
 
-    public void setWithPriorityRegistrationAndBoarding(Boolean withPriorityRegistrationAndBoarding) {
-        this.withPriorityRegistrationAndBoarding = withPriorityRegistrationAndBoarding;
+    public void setHasPriorityRegistrationAndBoarding(Boolean hasPriorityRegistrationAndBoarding) {
+        this.hasPriorityRegistrationAndBoarding = hasPriorityRegistrationAndBoarding;
     }
 
     public Integer getSeatNumber() {
@@ -214,11 +235,11 @@ public class TicketDTO extends BaseDTO {
                 : ticketDTO.arrivalLocalDateTime != null)
             return false;
         if (price != null ? !price.equals(ticketDTO.price) : ticketDTO.price != null) return false;
-        if (withBaggage != null ? !withBaggage.equals(ticketDTO.withBaggage) : ticketDTO.withBaggage != null)
+        if (hasBaggage != null ? !hasBaggage.equals(ticketDTO.hasBaggage) : ticketDTO.hasBaggage != null)
             return false;
-        if (withPriorityRegistrationAndBoarding != null
-                ? !withPriorityRegistrationAndBoarding.equals(ticketDTO.withPriorityRegistrationAndBoarding)
-                : ticketDTO.withPriorityRegistrationAndBoarding != null)
+        if (hasPriorityRegistrationAndBoarding != null
+                ? !hasPriorityRegistrationAndBoarding.equals(ticketDTO.hasPriorityRegistrationAndBoarding)
+                : ticketDTO.hasPriorityRegistrationAndBoarding != null)
             return false;
         if (seatNumber != null
                 ? !seatNumber.equals(ticketDTO.seatNumber)
@@ -237,9 +258,9 @@ public class TicketDTO extends BaseDTO {
         result = 31 * result + (departureLocalDateTime != null ? departureLocalDateTime.hashCode() : 0);
         result = 31 * result + (arrivalLocalDateTime != null ? arrivalLocalDateTime.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
-        result = 31 * result + (withBaggage != null ? withBaggage.hashCode() : 0);
-        result = 31 * result + (withPriorityRegistrationAndBoarding != null
-                ? withPriorityRegistrationAndBoarding.hashCode() : 0);
+        result = 31 * result + (hasBaggage != null ? hasBaggage.hashCode() : 0);
+        result = 31 * result + (hasPriorityRegistrationAndBoarding != null
+                ? hasPriorityRegistrationAndBoarding.hashCode() : 0);
         result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
